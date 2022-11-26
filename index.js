@@ -7,25 +7,39 @@ require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.kxkmed0.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-const testData = {
-  name: "rakib",
-  age: 20,
-};
+
 async function run() {
   try {
-    const productCollection = client
+    const userCollection = client
       .db("Buy-my-book")
-      .collection("productsCollection");
-    app.get("/products", async (req, res) => {
-      const query = {};
-      const products = await productCollection.find(query).toArray();
-      res.send(products);
+      .collection("userCollection");
+
+    app.post("/addUser", async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email };
+      const data = await userCollection.find(query).toArray();
+      if (data.length === 0) {
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+        console.log(result);
+      } else {
+        res.send("User Allready added");
+        console.log("User Allready added");
+      }
+    });
+
+    app.get("/user", async (req, res) => {
+      const query = { email: "f.zihad333@gmail.com" };
+      const result = await userCollection.find(query).toArray();
+      if (result) res.send(true);
+      else res.send(false);
     });
   } finally {
   }
