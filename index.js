@@ -25,11 +25,15 @@ async function run() {
 
     app.post("/addProduct", async (req, res) => {
       const product = req.body;
-      const result = await userCollection.insertOne(products);
+      const result = await products.insertOne(product);
       res.send(result);
     });
+
     app.post("/addUser", async (req, res) => {
       const user = req.body;
+      user.role === "seller" ? (user.isSeller = true) : (user.isSeller = false);
+      user.role === "admin" ? (user.isAdmin = true) : (user.isAdmin = false);
+      user.role === "buyer" ? (user.isBuyer = true) : (user.isBuyer = false);
       const query = { email: user.email };
       const data = await userCollection.find(query).toArray();
       if (data.length === 0) {
