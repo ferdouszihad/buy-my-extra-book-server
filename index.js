@@ -20,6 +20,7 @@ async function run() {
     const userCollection = client
       .db("Buy-my-book")
       .collection("userCollection");
+    const catagories = client.db("Buy-my-book").collection("catagories");
 
     app.post("/addUser", async (req, res) => {
       const user = req.body;
@@ -35,11 +36,18 @@ async function run() {
       }
     });
 
-    app.get("/user", async (req, res) => {
-      const query = { email: "f.zihad333@gmail.com" };
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
       const result = await userCollection.find(query).toArray();
-      if (result) res.send(true);
-      else res.send(false);
+      res.send(result[0]);
+    });
+
+    // loading Catagory
+    app.get("/catagories", async (req, res) => {
+      const query = {};
+      const result = await catagories.find(query).toArray();
+      res.send(result);
     });
   } finally {
   }
