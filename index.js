@@ -22,10 +22,16 @@ async function run() {
       .collection("userCollection");
     const catagories = client.db("Buy-my-book").collection("catagories");
     const products = client.db("Buy-my-book").collection("products");
+    const orders = client.db("Buy-my-book").collection("orders");
 
     app.post("/addProduct", async (req, res) => {
-      const product = req.body;
-      const result = await products.insertOne(product);
+      const order = req.body;
+      const result = await orders.insertOne(order);
+      res.send(result);
+    });
+    app.post("/makeOrder", async (req, res) => {
+      const order = req.body;
+      const result = await orders.insertOne(order);
       res.send(result);
     });
 
@@ -58,6 +64,16 @@ async function run() {
       const query = {};
       const result = await catagories.find(query).toArray();
       res.send(result);
+    });
+
+    app.get("/catagories/:cid", async (req, res) => {
+      const cid = req.params.cid;
+      const query1 = { catagory: cid };
+      const query2 = { id: parseInt(cid) };
+      console.log(cid);
+      const catagoryInfo = await catagories.findOne(query2);
+      const catagoryProducts = await products.find(query1).toArray();
+      res.send({ catagoryInfo, catagoryProducts });
     });
   } finally {
   }
