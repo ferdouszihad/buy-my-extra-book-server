@@ -21,7 +21,13 @@ async function run() {
       .db("Buy-my-book")
       .collection("userCollection");
     const catagories = client.db("Buy-my-book").collection("catagories");
+    const products = client.db("Buy-my-book").collection("products");
 
+    app.post("/addProduct", async (req, res) => {
+      const product = req.body;
+      const result = await userCollection.insertOne(products);
+      res.send(result);
+    });
     app.post("/addUser", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
