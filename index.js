@@ -42,6 +42,7 @@ async function run() {
       user.role === "buyer" ? (user.isBuyer = true) : (user.isBuyer = false);
       const query = { email: user.email };
       const data = await userCollection.find(query).toArray();
+
       if (data.length === 0) {
         const result = await userCollection.insertOne(user);
         res.send(result);
@@ -52,11 +53,27 @@ async function run() {
       }
     });
 
-    app.get("/user/:email", async (req, res) => {
+    // get admin role
+    app.get("/users/admin/:email", async (req, res) => {
       const email = req.params.email;
-      const query = { email: email };
-      const result = await userCollection.find(query).toArray();
-      res.send(result[0]);
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      res.send({ isAdmin: user?.role === "admin" });
+    });
+
+    // get seller role
+    app.get("/users/seller/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      res.send({ isSeller: user?.role === "seller" });
+    });
+    // get buyer role
+    app.get("/users/buyer/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await userCollection.findOne(query);
+      res.send({ isBuyer: user?.role === "buyer" });
     });
 
     // loading Catagory
