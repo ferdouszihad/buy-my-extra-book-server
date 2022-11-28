@@ -94,6 +94,12 @@ async function run() {
       const result = await products.find(query).toArray();
       res.send(result);
     });
+    app.get("/myBookings/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { BuyerEmail: email };
+      const result = await orders.find(query).toArray();
+      res.send(result);
+    });
   } finally {
   }
 }
