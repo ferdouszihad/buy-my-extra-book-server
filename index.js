@@ -66,6 +66,18 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/all-seller", async (req, res) => {
+      const query = { role: "seller" };
+      const result = await userCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/all-buyer", async (req, res) => {
+      const query = { role: "buyer" };
+      const result = await userCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.get("/catagories/:cid", async (req, res) => {
       const cid = req.params.cid;
       const query1 = { catagory: cid };
