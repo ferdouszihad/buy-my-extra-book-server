@@ -103,7 +103,7 @@ async function run() {
 
     app.get("/catagories/:cid", async (req, res) => {
       const cid = req.params.cid;
-      const query1 = { catagory: cid };
+      const query1 = { catagory: cid, status: "none" };
       const query2 = { id: parseInt(cid) };
       console.log(cid);
       const catagoryInfo = await catagories.findOne(query2);
@@ -145,6 +145,20 @@ async function run() {
       const updatedDoc = {
         $set: {
           isAdv: true,
+        },
+      };
+      const result = await products.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    });
+
+    app.put("/bookPurchase/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          isAdv: false,
+          status: "sold",
         },
       };
       const result = await products.updateOne(filter, updatedDoc, options);
