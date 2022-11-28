@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 
 app.use(cors());
@@ -25,8 +25,8 @@ async function run() {
     const orders = client.db("Buy-my-book").collection("orders");
 
     app.post("/addProduct", async (req, res) => {
-      const order = req.body;
-      const result = await orders.insertOne(order);
+      const product = req.body;
+      const result = await products.insertOne(product);
       res.send(result);
     });
     app.post("/makeOrder", async (req, res) => {
@@ -78,6 +78,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/advertiseItems", async (req, res) => {
+      const query = { isAdv: true };
+      const result = await products.find(query).toArray();
+      res.send(result);
+    });
+
     app.get("/catagories/:cid", async (req, res) => {
       const cid = req.params.cid;
       const query1 = { catagory: cid };
@@ -94,10 +100,37 @@ async function run() {
       const result = await products.find(query).toArray();
       res.send(result);
     });
+
+    app.delete("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await products.deleteOne(query);
+      res.send(result);
+    });
+
+    app.delete("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
     app.get("/myBookings/:email", async (req, res) => {
       const email = req.params.email;
       const query = { BuyerEmail: email };
       const result = await orders.find(query).toArray();
+      res.send(result);
+    });
+
+    app.put("/product/MakeAd/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          isAdv: true,
+        },
+      };
+      const result = await products.updateOne(filter, updatedDoc, options);
       res.send(result);
     });
   } finally {
