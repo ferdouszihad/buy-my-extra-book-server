@@ -104,8 +104,8 @@ async function run() {
     app.get("/catagories/:cid", async (req, res) => {
       const cid = req.params.cid;
       const query1 = { catagory: cid, status: "none" };
-      const query2 = { id: parseInt(cid) };
-      console.log(cid);
+      const query2 = { id: cid };
+
       const catagoryInfo = await catagories.findOne(query2);
       const catagoryProducts = await products.find(query1).toArray();
       res.send({ catagoryInfo, catagoryProducts });
